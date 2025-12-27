@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sri Rachoteshwara Electricals | Mahagaon Cross</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #0f172a, #1e293b, #334155);
+            margin: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(234, 88, 12, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(234, 88, 12, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .product-card .p-4 {
+            padding: 0.75rem;
+        }
+
+        @media(min-width:640px) {
+            .product-card .p-4 {
+                padding: 1.5rem;
+            }
+        }
+
+        .product-card h3 {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        @media(min-width:640px) {
+            .product-card h3 {
+                font-size: 1.25rem;
+                line-height: 1.75rem;
+            }
+        }
+
+        .product-card .text-2xl {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+
+        @media(min-width:640px) {
+            .product-card .text-2xl {
+                font-size: 1.875rem;
+                line-height: 2.25rem;
+            }
+        }
+
+        .product-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(234, 88, 12, 0.3);
+        }
+
+        .product-card.selected {
+            border: 3px solid #ea580c;
+            box-shadow: 0 0 30px rgba(234, 88, 12, 0.6), 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(-10px) scale(1.03);
+        }
+
+        .product-price {
+            display: none;
+        }
+
+        .product-card.selected .product-price {
+            display: block;
+        }
+
+        .product-card.selected .price-placeholder {
+            display: none;
+        }
+
+        .badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            z-index: 10;
+        }
+
+        @media(min-width:640px) {
+            .badge {
+                top: 12px;
+                right: 12px;
+                padding: 6px 14px;
+                font-size: 11px;
+            }
+        }
+
+        .bulk-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(135deg, #ea580c, #f97316);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 8px;
+            font-weight: 700;
+            z-index: 10;
+        }
+
+        @media(min-width:640px) {
+            .bulk-badge {
+                top: 12px;
+                left: 12px;
+                padding: 6px 14px;
+                font-size: 10px;
+            }
+        }
+
+        .product-img-container {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 1.5rem 1.5rem 0 0;
+            overflow: hidden;
+        }
+
+        @media(min-width:640px) {
+            .product-img-container {
+                height: 280px;
+            }
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 12px;
+            transition: all .4s;
+        }
+
+        @media(min-width:640px) {
+            .product-img {
+                padding: 20px;
+            }
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.08);
+        }
+
+        .img-fallback {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #3b82f6;
+            font-size: 64px;
+            opacity: 1;
+            transition: opacity .4s;
+        }
+
+        .img-loaded .img-fallback {
+            opacity: 0;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media(max-width:640px) {
+            .hero {
+                min-height: 70vh;
+            }
+        }
+
+        .house-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.2) contrast(1.2);
+            transition: filter 4s;
+        }
+
+        .house-image.lit {
+            filter: brightness(1) saturate(1.4) contrast(1.1);
+        }
+
+        .light-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 35%, rgba(255, 240, 150, 0.8) 0%, transparent 55%);
+            opacity: 0;
+            transition: opacity 3.5s ease 1.5s;
+            mix-blend-mode: screen;
+        }
+
+        .light-glow.on {
+            opacity: 1;
+        }
+
+        .floating-btn {
+            position: fixed;
+            right: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: all .3s;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @media(min-width:640px) {
+            .floating-btn {
+                width: 64px;
+                height: 64px;
+                font-size: 28px;
+                right: 20px;
+            }
+        }
+
+        @media(max-width:640px) {
+            .floating-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+        }
+
+        .whatsapp {
+            bottom: 20px;
+        }
+
+        .call {
+            bottom: 85px;
+        }
+
+        @media(min-width:640px) {
+            .call {
+                bottom: 95px;
+            }
+        }
+
+        .cart-btn {
+            bottom: 150px;
+        }
+
+        @media(min-width:640px) {
+            .cart-btn {
+                bottom: 170px;
+            }
+        }
+
+        .whatsapp {
+            background: linear-gradient(135deg, #25D366, #20BA5A);
+        }
+
+        .call {
+            background: linear-gradient(135deg, #ea580c, #dc2626);
+        }
+
+        .cart-btn {
+            background: linear-gradient(135deg, #7c2d12, #991b1b);
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        #backToTop {
+            position: fixed;
+            bottom: 235px;
+            right: 16px;
+            width: 48px;
+            height: 48px;
+            background: #ea580c;
+            color: white;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 8px 20px rgba(234, 88, 12, 0.5);
+            z-index: 1001;
+            cursor: pointer;
+        }
+
+        @media(min-width:640px) {
+            #backToTop {
+                bottom: 265px;
+                right: 20px;
+                width: 56px;
+                height: 56px;
+                font-size: 24px;
+            }
+        }
+
+        #backToTop.show {
+            display: flex;
+        }
+
+        .active-tab {
+            background: linear-gradient(135deg, #ea580c, #f97316) !important;
+            color: white !important;
+            box-shadow: 0 4px 16px rgba(234, 88, 12, 0.4) !important;
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: linear-gradient(to right, #ea580c, #dc2626);
+            transition: all .3s;
+        }
+
+        .sticky-header.scrolled {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .cart-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .cart-modal.open {
+            display: flex;
+        }
+
+        .qty-btn-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #ea580c;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div
+        class="sticky-header bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 px-4 text-center font-bold text-xs sm:text-sm lg:text-base">
+        <div class="flex flex-wrap justify-center items-center gap-2 sm:gap-4">
+            <span><i class="fas fa-clock mr-1"></i>Open Every Day • 9 AM - 9 PM</span>
+            <span class="hidden sm:inline">|</span>
+            <span><i class="fas fa-gift mr-1"></i>Bulk Discounts Available</span>
+        </div>
+    </div>
+
+    <header class="hero">
+        <img src="" data-img="hero-house.webp" alt="House Lights" class="house-image" id="house">
+        <div class="light-glow" id="glow"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+        <div class="relative z-10 text-center px-4 sm:px-6 max-w-7xl mx-auto">
+            <h1
+                class="text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-extrabold text-white drop-shadow-2xl leading-tight">
+                Sri Rachoteshwara<br>Electricals
+            </h1>
+            <p
+                class="text-xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-orange-400 drop-shadow-2xl mt-4 sm:mt-8">
+                We Bring Light To Your Home
+            </p>
+            <a href="#products"
+                class="inline-block mt-8 sm:mt-12 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white font-bold text-lg sm:text-xl lg:text-2xl py-4 px-8 sm:py-6 sm:px-16 rounded-full transition transform hover:scale-105 shadow-2xl">
+                Explore Products <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+            <p
+                class="text-base sm:text-lg md:text-xl lg:text-2xl text-cyan-100 font-medium mt-6 sm:mt-8 drop-shadow-lg px-4">
+                <i class="fas fa-star text-yellow-400"></i> Premium Brands: Anchor • V-Guard • Maharaja • Hi-Fi • Maaru
+            </p>
+        </div>
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i class="fas fa-chevron-down text-3xl sm:text-5xl text-orange-300"></i>
+        </div>
+    </header>
+
+    <div
+        class="bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 px-4 text-center font-bold text-sm sm:text-base lg:text-lg">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+            <span><i class="fas fa-hand-pointer mr-2"></i>Select Products → Add to Cart → Send via WhatsApp!</span>
+            <span id="cartCounter" class="bg-white text-orange-600 px-4 py-2 rounded-full font-bold shadow-lg">
+                <i class="fas fa-shopping-cart mr-1"></i> 0 items
+            </span>
+        </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-4 my-6 sm:my-8 relative z-50">
+        <div class="relative">
+            <input type="text" id="searchInput" placeholder="🔍 Search products..."
+                class="w-full px-6 py-4 sm:py-5 rounded-full text-base sm:text-lg shadow-2xl border-3 border-orange-300 focus:border-orange-600 outline-none bg-white">
+            <button onclick="clearSearch()"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 text-xl"
+                style="display: none;" id="clearSearchBtn">
+                <i class="fas fa-times-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <section id="products" class="py-12 sm:py-20 px-4 sm:px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-8 sm:mb-12">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">Our Premium Products</h2>
+                <p class="text-base sm:text-lg text-gray-300">Quality electrical solutions for every need</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-2 mb-8 sm:mb-12 px-2 max-w-4xl mx-auto">
+                <button
+                    class="filter-btn px-3 py-2 sm:px-8 sm:py-4 rounded-full font-bold text-xs sm:text-base lg:text-lg transition shadow-lg text-white w-[calc(33.333%-0.5rem)] sm:w-auto"
+                    data-category="all">
+                    <i class="fas fa-th mr-1"></i>All
+                </button>
+                <button
+                    class="filter-btn px-3 py-2 sm:px-8 sm:py-4 rounded-full font-bold text-xs sm:text-base lg:text-lg bg-white shadow-lg transition w-[calc(33.333%-0.5rem)] sm:w-auto"
+                    data-category="lighting">
+                    <i class="fas fa-lightbulb mr-1"></i>Lighting
+                </button>
+                <button
+                    class="filter-btn px-3 py-2 sm:px-8 sm:py-4 rounded-full font-bold text-xs sm:text-base lg:text-lg bg-white shadow-lg transition w-[calc(33.333%-0.5rem)] sm:w-auto"
+                    data-category="appliances">
+                    <i class="fas fa-plug mr-1"></i>Appliances
+                </button>
+                <button
+                    class="filter-btn px-3 py-2 sm:px-8 sm:py-4 rounded-full font-bold text-xs sm:text-base lg:text-lg bg-white shadow-lg transition w-[calc(33.333%-0.5rem)] sm:w-auto"
+                    data-category="switches">
+                    <i class="fas fa-toggle-on mr-1"></i>Switches
+                </button>
+                <button
+                    class="filter-btn px-3 py-2 sm:px-8 sm:py-4 rounded-full font-bold text-xs sm:text-base lg:text-lg bg-white shadow-lg transition w-[calc(33.333%-0.5rem)] sm:w-auto"
+                    data-category="wires">
+                    <i class="fas fa-stream mr-1"></i>Wires
+                </button>
+                <button
+                    class="filter-btn px-3 py-2 sm:px-8 sm:py-4 rounded-full font-bold text-xs sm:text-base lg:text-lg bg-white shadow-lg transition w-[calc(33.333%-0.5rem)] sm:w-auto"
+                    data-category="tools">
+                    <i class="fas fa-tools mr-1"></i>Tools
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 lg:gap-8"
+                id="product-grid"></div>
+
+            <div id="noResults" class="text-center py-20 hidden">
+                <i class="fas fa-search text-6xl text-gray-400 mb-4"></i>
+                <p class="text-2xl font-bold text-gray-300 mb-2">No products found</p>
+                <p class="text-gray-400">Try adjusting your search or filters</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 sm:py-20 bg-gradient-to-b from-slate-800 to-slate-900 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 sm:mb-16 text-white">Our Professional Services
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6 sm:gap-10">
+                <div class="glass-card p-6 sm:p-10 rounded-3xl hover:scale-105 transition transform">
+                    <div
+                        class="bg-gradient-to-br from-orange-500 to-red-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-home text-4xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">New Home Wiring</h3>
+                    <p class="text-gray-700 mb-6 text-sm sm:text-base">Complete electrical wiring for new homes & flats
+                        with modern standards</p>
+                    <a href="https://wa.me/917899577774?text=Namaste!%20I%20need%20New%20Home%20Complete%20Wiring%20service"
+                        class="inline-block bg-gradient-to-r from-green-500 to-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold hover:from-green-600 hover:to-green-700 transition transform hover:scale-105">
+                        <i class="fab fa-whatsapp mr-2"></i>Inquire Now
+                    </a>
+                </div>
+                <div class="glass-card p-6 sm:p-10 rounded-3xl hover:scale-105 transition transform">
+                    <div
+                        class="bg-gradient-to-br from-orange-500 to-red-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-tools text-4xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Home Upgrades</h3>
+                    <p class="text-gray-700 mb-6 text-sm sm:text-base">MCB upgrade, LED installation, modular switches &
+                        more</p>
+                    <a href="https://wa.me/917899577774?text=Namaste!%20I%20need%20Home%20Electrical%20Upgrade%20service"
+                        class="inline-block bg-gradient-to-r from-green-500 to-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold hover:from-green-600 hover:to-green-700 transition transform hover:scale-105">
+                        <i class="fab fa-whatsapp mr-2"></i>Inquire Now
+                    </a>
+                </div>
+                <div class="glass-card p-6 sm:p-10 rounded-3xl hover:scale-105 transition transform">
+                    <div
+                        class="bg-gradient-to-br from-orange-500 to-red-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-toilet text-4xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Plumbing Works</h3>
+                    <p class="text-gray-700 mb-6 text-sm sm:text-base">Pipeline, bathroom fittings, geyser installation
+                    </p>
+                    <a href="https://wa.me/917899577774?text=Namaste!%20I%20need%20Plumbing%20Installation%20service"
+                        class="inline-block bg-gradient-to-r from-green-500 to-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold hover:from-green-600 hover:to-green-700 transition transform hover:scale-105">
+                        <i class="fab fa-whatsapp mr-2"></i>Inquire Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 sm:py-20 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-12 text-white">Why Choose Us?</h2>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card p-6 rounded-2xl text-center hover:scale-105 transition">
+                    <i class="fas fa-certificate text-5xl text-orange-600 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Quality Products</h3>
+                    <p class="text-gray-600 text-sm">100% genuine & ISI certified</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center hover:scale-105 transition">
+                    <i class="fas fa-tags text-5xl text-orange-600 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Best Prices</h3>
+                    <p class="text-gray-600 text-sm">Competitive rates & bulk discounts</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center hover:scale-105 transition">
+                    <i class="fas fa-user-tie text-5xl text-orange-600 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Expert Service</h3>
+                    <p class="text-gray-600 text-sm">Professional installation support</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center hover:scale-105 transition">
+                    <i class="fas fa-clock text-5xl text-orange-600 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Always Open</h3>
+                    <p class="text-gray-600 text-sm">9 AM - 9 PM, every day</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gradient-to-b from-gray-900 to-black text-white py-12 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h3 class="text-2xl sm:text-3xl font-bold mb-4">Sri Rachoteshwara Electricals</h3>
+            <p class="text-orange-400 text-base sm:text-xl mb-6">
+                Near Dr. B.R Ambedkar Statue,<br>
+                Gulbarga Road, Mahagaon Cross, 585316
+            </p>
+            <div class="flex justify-center gap-6 sm:gap-8 text-3xl sm:text-4xl mb-8">
+                <a href="https://wa.me/917899577774" class="text-green-500 hover:scale-125 transition transform">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="tel:+917899577774" class="text-orange-600 hover:scale-125 transition transform">
+                    <i class="fas fa-phone-alt"></i>
+                </a>
+                <a href="https://maps.app.goo.gl/kQZtoi6mtziyGNJEA" target="_blank"
+                    class="text-blue-600 hover:scale-125 transition transform">
+                    <i class="fas fa-map-marker-alt"></i>
+                </a>
+            </div>
+            <p class="text-orange-400 text-lg sm:text-xl font-semibold mb-6">Your Trusted Electrical Partner</p>
+            <p class="text-gray-400 text-sm">© 2025 All Rights Reserved | Designed with ❤️ for Locals</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/917899577774" class="floating-btn whatsapp" title="WhatsApp"><i
+            class="fab fa-whatsapp"></i></a>
+    <a href="tel:+917899577774" class="floating-btn call" title="Call"><i class="fas fa-phone"></i></a>
+    <button class="floating-btn cart-btn" onclick="openCartModal()" title="View Cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" id="count">0</span>
+    </button>
+    <div id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
+
+    <div id="cartModal" class="cart-modal">
+        <div class="glass-card rounded-3xl w-full max-w-2xl max-h-screen overflow-y-auto p-6 relative">
+            <button onclick="closeCartModal()"
+                class="absolute top-4 right-6 text-3xl text-gray-600 hover:text-red-600">&times;</button>
+            <h2 class="text-3xl font-bold text-center mb-6 text-orange-600"><i
+                    class="fas fa-shopping-cart mr-2"></i>Your Cart (<span id="modalCount">0</span> items)</h2>
+            <div id="cartItemsList" class="space-y-4 mb-6"></div>
+            <div class="border-t-2 border-dashed border-gray-300 pt-4">
+                <div class="flex justify-between text-xl font-bold">
+                    <span>Total Estimate:</span>
+                    <span class="text-orange-600">₹<span id="cartTotal">0</span></span>
+                </div>
+            </div>
+            <div class="flex gap-4 mt-8">
+                <button onclick="sendCartToWhatsApp()"
+                    class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-full font-bold text-lg"><i
+                        class="fab fa-whatsapp mr-2"></i>Send on WhatsApp</button>
+                <button onclick="closeCartModal()"
+                    class="flex-1 bg-gray-600 text-white py-4 rounded-full font-bold text-lg">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="products.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
